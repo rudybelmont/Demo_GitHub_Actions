@@ -1,10 +1,4 @@
-name: Basic CI        run: ls -la
-      - name: Basic check
-        run: |
-          echo "✅ CI ran"
-          # Uncomment to simulate failure:
-          # exit 1
-``
+name: Basic CI
 
 on:
   workflow_dispatch: {}
@@ -17,4 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Show files
+        run: ls -la
+
+      - name: Basic check
+        run: |
+          echo "✅ CI ran"
+          # Uncomment to simulate failure:
+          # exit 1
