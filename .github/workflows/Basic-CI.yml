@@ -42,7 +42,30 @@ jobs:
         run: npm run lint --if-present
 
       - name: Build
-        run: npm run build --if-present
+        run: |
+          npm run build --if-present
+          mkdir -p artifacts/build
+          if [ -d dist ]; then
+            cp -r dist artifacts/build/dist
+          else
+            echo "No dist directory found" > artifacts/build/README.txt
+          fi
 
       - name: Test
-        run: npm test --if-present
+        run: |
+          mkdir -p artifacts/test-results
+          npm test --if-present || TEST_EXIT_CODE=$?
+          echo "Test step completed" > artifacts/test-results/summary.txt
+          exit ${TEST_EXIT_CODE:-0}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-node-${{ matrix.node-version }}
+          path: artifacts/build
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-node-${{ matrix.node-version }}
+          path: artifacts/test-results
