@@ -30,4 +30,3 @@ jobs:
           echo "Branch/Ref: ${{ github.ref }}"
           echo "Message: ${{ inputs.message }}"
           echo "Environment: ${{ inputs.environment }}"
-``
