@@ -1,0 +1,33 @@
+name: Manual Demo Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "Message to print"
+        required: true
+        default: "Hello from manual trigger"
+        type: string
+      environment:
+        description: "Target environment"
+        required: true
+        default: "demo"
+        type: choice
+        options:
+          - demo
+          - staging
+          - production
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show workflow details
+        run: |
+          echo "Workflow manually triggered!"
+          echo "Actor: ${{ github.actor }}"
+          echo "Branch/Ref: ${{ github.ref }}"
+          echo "Message: ${{ inputs.message }}"
+          echo "Environment: ${{ inputs.environment }}"
+``
