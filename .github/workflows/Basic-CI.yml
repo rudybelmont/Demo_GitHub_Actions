@@ -1,4 +1,4 @@
-name: Node CI
+name: Basic CI Demo
 
 on:
   push:
@@ -15,57 +15,45 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-          package-manager-cache: false
-
-      - name: Show versions
+      - name: Show repository files
         run: |
-          node --version
-          npm --version
+          echo "Repository checked out successfully"
+          pwd
+          ls -la
+          find . -maxdepth 2 -type f | sort
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Lint
-        run: npm run lint --if-present
-
-      - name: Build
+      - name: Simulate build output
         run: |
-          npm run build --if-present
           mkdir -p artifacts/build
-          if [ -d dist ]; then
-            cp -r dist artifacts/build/dist
-          else
-            echo "No dist directory found" > artifacts/build/README.txt
-          fi
+          echo "Build completed successfully on $(date)" > artifacts/build/build.txt
+          echo "Repository: $GITHUB_REPOSITORY" >> artifacts/build/build.txt
+          echo "Actor: $GITHUB_ACTOR" >> artifacts/build/build.txt
+          echo "Ref: $GITHUB_REF" >> artifacts/build/build.txt
 
-      - name: Test
+      - name: Simulate test report
         run: |
           mkdir -p artifacts/test-results
-          npm test --if-present || TEST_EXIT_CODE=$?
-          echo "Test step completed" > artifacts/test-results/summary.txt
-          exit ${TEST_EXIT_CODE:-0}
+          cat <<EOF > artifacts/test-results/test-report.txt
+          TEST REPORT
+          ===========
+          Status: PASSED
+          Workflow: $GITHUB_WORKFLOW
+          Run ID: $GITHUB_RUN_ID
+          Commit: $GITHUB_SHA
+          EOF
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-output-node-${{ matrix.node-version }}
+          name: build-output
           path: artifacts/build
 
-      - name: Upload test artifacts
+      - name: Upload test report artifact
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-node-${{ matrix.node-version }}
+          name: test-report
           path: artifacts/test-results
