@@ -1,0 +1,20 @@
+name: Basic CI        run: ls -la
+      - name: Basic check
+        run: |
+          echo "✅ CI ran"
+          # Uncomment to simulate failure:
+          # exit 1
+``
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show files
